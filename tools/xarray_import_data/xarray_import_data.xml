@@ -8,13 +8,14 @@
         <requirement type="package" version="1.6.0">netcdf4</requirement>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-        python '$__tool_directory__/xarray_import_data.py' '$opendap_url' '$decode_times' '$decode_cf' '$output_dataset' 
+        #for $url in $opendap_urls:
+            python '$__tool_directory__/xarray_import_data.py' '$url' '$decode_times' '$decode_cf' '$output_dataset' 
+        #end for
     ]]></command>
     <inputs>
-        <param name="opendap_url" type="text" format="netcdf" label="OPeNDAP URL"
+        <param name="opendap_urls" type="data" allow_uri_if_protocol="https,http" multiple="true" label="OPeNDAP URL"
             help="OPeNDAP URL to a dataset, also see https://docs.xarray.dev/en/stable/user-guide/io.html#opendap"
             optional="false">
-            <validator type="regex" message="Type a valid url">^(https:|http:|\.)\S*</validator>
         </param>
         <param name="decode_times" type="boolean" label="Decode times"
             help="If true, decode time variables to datetime objects. If false, keep them as raw data."
@@ -29,7 +30,7 @@
     </outputs>
     <tests>
         <test>
-            <param name="opendap_url"
+            <param name="opendap_urls" type="data" allow_uri_if_protocol="https,http"
                 value="http://test.opendap.org:8080/opendap/catalog/data/nc/data.nc" />
             <output name="output_dataset" ftype="netcdf">
                 <assert_contents>
